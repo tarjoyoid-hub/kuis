@@ -6,6 +6,9 @@ import {
   PieChart, Users, HelpCircle, Check, AlertCircle, Shield, Image as ImageIcon, Flame
 } from 'lucide-react';
 
+// Ganti teks di dalam tanda petik dengan URL Google Apps Script milik Anda
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyH3YgzkrntF0hGbPQNB-Bizp4ro934a5DLM7ifPmJSAlbqqo-M07l8aA8dpdWYZc4F/exec";
+
 // --- DATA SOAL DEFAULT (40 SOAL SESUAI KATEGORI) ---
 const INITIAL_QUESTIONS = [
   // 1-8: Hewan
@@ -258,6 +261,27 @@ export default function App() {
     }
   };
 
+  // Perintah untuk mengirim data siswa ke Google Sheets
+fetch(GOOGLE_SCRIPT_URL, {
+  method: "POST",
+  mode: "no-cors",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({
+    action: "saveResult",
+    name: studentName,        // Nama Siswa
+    studentClass: studentClass,// Kelas
+    score: finalScoreCalculated, // Nilai Akhir (0-100)
+    correct: score,           // Jumlah Jawaban Benar
+    duration: totalSeconds    // Waktu Pengerjaan (Detik)
+  })
+});
+
+
+
+
+
+
+  
   // Guru Login
   const handleTeacherLogin = (e) => {
     e.preventDefault();
