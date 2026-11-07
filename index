@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANAK PINTAR - Kuis Edukasi Interaktif</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter & Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+        .animate-shake {
+            animation: shake 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-sky-300 via-sky-100 to-amber-50 text-slate-800 pb-10">
+
+    <!-- CONTAINER UTAMA -->
+    <div id="app" class="max-w-6xl mx-auto px-4 pt-6">
+
+        <!-- ================= 1. HALAMAN BERANDA ================= -->
+        <div id="page-home" class="flex flex-col items-center justify-center text-center py-4">
+            <div class="relative w-full max-w-4xl bg-white/80 backdrop-blur-md rounded-3xl p-6 sm:p-10 shadow-2xl border-4 border-white overflow-hidden my-4">
+                
+                <!-- Tombol Audio -->
+                <button id="btn-toggle-sound" onclick="toggleSound()" class="absolute top-4 left-6 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition transform hover:scale-105 border bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-400">
+                    <i id="icon-sound" class="fas fa-volume-high animate-bounce"></i>
+                    <span id="text-sound">Suara Aktif</span>
+                </button>
+
+                <!-- Tombol Login Guru -->
+                <button onclick="goToTeacherPage()" class="absolute top-4 right-6 px-4 py-2 bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition transform hover:scale-105">
+                    <i class="fas fa-school text-yellow-300"></i> Halaman Guru
+                </button>
+
+                <div class="relative z-10 flex flex-col items-center pt-8 sm:pt-0">
+                    <div class="inline-block px-5 py-2 bg-yellow-300 text-yellow-900 font-extrabold rounded-full text-lg sm:text-xl mb-4 shadow-md animate-pulse">
+                        🎮 Kuis Tebak Gambar
+                    </div>
+
+                    <!-- Ilustrasi Karakter -->
+                    <div class="flex items-center justify-center gap-6 my-4 transform hover:scale-105 transition duration-300">
+                        <!-- Kartun Siswa SD (SVG) -->
+                        <svg class="w-28 h-36 sm:w-36 sm:h-44 drop-shadow-xl" viewBox="0 0 160 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="80" cy="190" rx="45" ry="8" fill="#000" opacity="0.15" />
+                            <path d="M40 125 C40 115 120 115 120 125 L125 185 C125 190 35 190 35 185 Z" fill="#FFF" stroke="#CBD5E1" stroke-width="2" />
+                            <path d="M74 135 L86 135 L89 168 L80 178 L71 168 Z" fill="#DC2626"/>
+                            <circle cx="80" cy="80" r="36" fill="#FFE0C2"/>
+                            <circle cx="65" cy="80" r="6" fill="#0F172A"/>
+                            <circle cx="95" cy="80" r="6" fill="#0F172A"/>
+                            <path d="M64 92 Q80 106 96 92" fill="#E11D48" stroke="#991B1B" stroke-width="2"/>
+                            <path d="M42 62 C42 32 118 32 118 62 Z" fill="#EF4444"/>
+                            <path d="M36 60 Q80 54 124 60 L126 67 Q80 60 34 67 Z" fill="#B91C1C"/>
+                        </svg>
+                        
+                        <!-- Kartun Siswi SD (SVG) -->
+                        <svg class="w-28 h-36 sm:w-36 sm:h-44 drop-shadow-xl" viewBox="0 0 160 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <ellipse cx="80" cy="190" rx="45" ry="8" fill="#000" opacity="0.15" />
+                            <path d="M40 125 C40 115 120 115 120 125 L125 185 C125 190 35 190 35 185 Z" fill="#FFF" stroke="#CBD5E1" stroke-width="2" />
+                            <path d="M74 133 L86 133 L88 165 L80 174 L72 165 Z" fill="#DC2626"/>
+                            <circle cx="80" cy="80" r="36" fill="#FFF0E5"/>
+                            <circle cx="65" cy="80" r="6.5" fill="#0F172A"/>
+                            <circle cx="95" cy="80" r="6.5" fill="#0F172A"/>
+                            <path d="M66 91 Q80 105 94 91" fill="#E11D48" stroke="#991B1B" stroke-width="2"/>
+                            <path d="M42 62 C42 32 118 32 118 62 Z" fill="#EF4444"/>
+                            <path d="M36 60 Q80 54 124 60 L126 67 Q80 60 34 67 Z" fill="#B91C1C"/>
+                        </svg>
+                    </div>
+
+                    <h2 class="text-3xl sm:text-5xl font-black text-sky-600 mb-3 drop-shadow">
+                        Ayo Bermain dan Belajar!
+                    </h2>
+                    <p class="text-slate-600 max-w-xl text-base sm:text-lg font-medium mb-8">
+                        Tebak 40 gambar hewan, buah, sayur, kendaraan, dan benda di sekitarmu. Kumpulkan bintang dan jadi juara!
+                    </p>
+
+                    <div class="flex flex-wrap justify-center gap-3 mb-8">
+                        <span class="px-3 py-1.5 bg-amber-100 text-amber-800 rounded-full text-sm font-bold shadow-sm">🦁 Hewan</span>
+                        <span class="px-3 py-1.5 bg-red-100 text-red-800 rounded-full text-sm font-bold shadow-sm">🍎 Buah</span>
+                        <span class="px-3 py-1.5 bg-emerald-100 text-emerald-800 rounded-full text-sm font-bold shadow-sm">🥦 Sayur</span>
+                        <span class="px-3 py-1.5 bg-sky-100 text-sky-800 rounded-full text-sm font-bold shadow-sm">🚗 Kendaraan</span>
+                        <span class="px-3 py-1.5 bg-purple-100 text-purple-800 rounded-full text-sm font-bold shadow-sm">✏️ Benda</span>
+                    </div>
+
+                    <div class="flex justify-center w-full max-w-md">
+                        <button onclick="showPage('student-form')" class="w-full sm:w-auto px-10 py-4 bg-gradient-to-r from-emerald-400 to-green-500 hover:from-emerald-500 hover:to-green-600 text-white font-black text-xl rounded-2xl shadow-xl hover:shadow-2xl transform hover:-translate-y-1 transition duration-200 flex items-center justify-center gap-3 border-b-4 border-green-700">
+                            <i class="fas fa-play"></i> MULAI BERMAIN
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PAPAN PERINGKAT TOP 10 BERANDA -->
+            <div class="w-full max-w-4xl bg-white/90 backdrop-blur-md rounded-3xl p-6 sm:p-8 shadow-2xl border-4 border-yellow-300 my-6 relative overflow-hidden">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-6 pb-4 border-b-2 border-amber-100">
+                    <div class="flex items-center gap-3">
+                        <div class="p-3 bg-amber-100 text-amber-600 rounded-2xl shadow-sm animate-bounce">
+                            <i class="fas fa-trophy text-yellow-500 text-2xl"></i>
+                        </div>
+                        <div class="text-left">
+                            <h3 class="text-2xl font-black text-slate-800">Papan Bintang Pintar</h3>
+                            <p class="text-xs font-bold text-slate-500">10 Adik Pintar Terbaik 🌟</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b-2 border-slate-100 text-xs font-black text-slate-400 uppercase">
+                                <th class="py-3 px-3 text-center">Posisi</th>
+                                <th className="py-3 px-3">Adik Pintar</th>
+                                <th class="py-3 px-3 text-center">Kelas</th>
+                                <th class="py-3 px-3 text-center">Nilai</th>
+                                <th class="py-3 px-3 text-center">Waktu</th>
+                            </tr>
+                        </thead>
+                        <tbody id="home-leaderboard-tbody" class="divide-y divide-slate-100 text-sm font-bold">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 2. FORM ISIAN SISWA ================= -->
+        <div id="page-student-form" class="hidden max-w-md mx-auto py-8">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border-4 border-sky-300">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+                        <i class="fas fa-user-check text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800">Data Adik Pintar</h2>
+                    <p class="text-xs font-semibold text-slate-500 mt-1">Isi nama dan kelasmu sebelum mulai kuis ya!</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap Adik</label>
+                        <input type="text" id="input-student-name" placeholder="Contoh: Budi Santoso" class="w-full px-4 py-3 rounded-2xl border-2 border-slate-200 font-bold text-slate-800 focus:border-sky-400 outline-none transition" />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Pilih Kelas</label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button type="button" onclick="selectClass('1')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-sky-500 text-white border-sky-600 shadow-md" data-class="1">Kelas 1</button>
+                            <button type="button" onclick="selectClass('2')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100" data-class="2">Kelas 2</button>
+                            <button type="button" onclick="selectClass('3')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100" data-class="3">Kelas 3</button>
+                            <button type="button" onclick="selectClass('4')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100" data-class="4">Kelas 4</button>
+                            <button type="button" onclick="selectClass('5')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100" data-class="5">Kelas 5</button>
+                            <button type="button" onclick="selectClass('6')" class="class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100" data-class="6">Kelas 6</button>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 space-y-2">
+                        <button onclick="startQuiz()" class="w-full py-4 bg-emerald-500 hover:bg-emerald-600 text-white font-black text-lg rounded-2xl shadow-lg border-b-4 border-emerald-700 flex items-center justify-center gap-2 transition">
+                            <i class="fas fa-play"></i> MULAI SEKARANG
+                        </button>
+                        <button onclick="showPage('home')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-sm transition">
+                            BATAL
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 3. HALAMAN KUIS BERMAIN ================= -->
+        <div id="page-quiz" class="hidden max-w-2xl mx-auto py-4">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border-4 border-sky-200 relative overflow-hidden">
+                <!-- Gambar / Emoji Utama -->
+                <div class="w-full h-44 sm:h-56 bg-gradient-to-br from-amber-50 to-amber-100 rounded-2xl flex items-center justify-center mb-6 shadow-inner border border-amber-200">
+                    <span id="quiz-icon" class="text-8xl sm:text-9xl transform hover:scale-110 transition duration-300">🐱</span>
+                </div>
+
+                <h3 id="quiz-question" class="text-xl sm:text-2xl font-black text-center text-slate-800 mb-6">
+                    Gambar apakah ini?
+                </h3>
+
+                <!-- Pilihan Jawaban -->
+                <div id="quiz-options" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                    <!-- Injected via JavaScript -->
+                </div>
+
+                <!-- Notifikasi Jawaban -->
+                <div id="quiz-feedback" class="hidden p-4 rounded-2xl text-center mb-6">
+                    <!-- Injected via JavaScript -->
+                </div>
+
+                <!-- Indikator Skor -->
+                <div class="flex justify-between items-center pt-2">
+                    <div class="text-xs font-bold text-slate-500">
+                        Benar: <span id="quiz-score-correct" class="text-emerald-600 text-sm font-black">0</span> | 
+                        Salah: <span id="quiz-score-wrong" class="text-rose-500 font-black">0</span>
+                    </div>
+                    <div id="quiz-loading-next" class="hidden text-xs font-bold text-sky-600 animate-pulse">
+                        Membuka soal berikutnya... ⏳
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 4. HALAMAN HASIL KUIS ================= -->
+        <div id="page-result" class="hidden max-w-2xl mx-auto py-8">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-10 border-4 border-yellow-300 text-center relative overflow-hidden">
+                <div class="text-6xl mb-3 animate-bounce">🏆</div>
+                <h2 class="text-3xl font-black text-slate-800 mb-1">Hasil Kuis Anak Pintar</h2>
+                <p class="text-slate-500 font-semibold mb-6">Selamat telah menyelesaikan seluruh 40 Soal!</p>
+
+                <div class="bg-gradient-to-br from-sky-400 to-indigo-500 rounded-3xl p-6 text-white shadow-xl mb-6">
+                    <p class="text-sm font-bold opacity-90 uppercase tracking-widest">NILAI AKHIR KAMU</p>
+                    <div id="result-final-score" class="text-6xl sm:text-7xl font-black my-2 text-yellow-300 drop-shadow">100</div>
+                    <div id="result-predicate" class="inline-block px-4 py-1.5 bg-white/20 backdrop-blur rounded-full text-base font-extrabold border border-white/30">
+                        Predikat: Luar Biasa! 🌟
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <div class="text-xs font-bold text-slate-500">Siswa</div>
+                        <div id="result-student-name" class="font-black text-slate-800 text-sm truncate">-</div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <div class="text-xs font-bold text-slate-500">Jawaban Benar</div>
+                        <div id="result-correct-count" class="font-black text-emerald-600 text-lg">0 / 40</div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <div class="text-xs font-bold text-slate-500">Waktu Pengerjaan</div>
+                        <div id="result-duration" class="font-black text-indigo-600 text-lg">0s</div>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-2xl border border-slate-200">
+                        <div class="text-xs font-bold text-slate-500">Persentase</div>
+                        <div id="result-percentage" class="font-black text-amber-600 text-lg">0%</div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="showPage('student-form')" class="px-6 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-black rounded-2xl text-base shadow-md border-b-4 border-emerald-700 flex items-center justify-center gap-2 transition">
+                        <i class="fas fa-rotate-right"></i> MAIN LAGI
+                    </button>
+                    <button onclick="showPage('home')" class="px-6 py-3.5 bg-sky-500 hover:bg-sky-600 text-white font-black rounded-2xl text-base shadow-md border-b-4 border-sky-700 flex items-center justify-center gap-2 transition">
+                        <i class="fas fa-house"></i> KEMBALI KE BERANDA
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= 5. HALAMAN LOGIN GURU ================= -->
+        <div id="page-teacher-login" class="hidden max-w-md mx-auto py-10">
+            <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 border-4 border-indigo-200">
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-inner">
+                        <i class="fas fa-lock text-2xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-black text-slate-800">Login Guru Pengelola</h2>
+                </div>
+
+                <div id="login-error-msg" class="hidden mb-4 p-3 bg-rose-100 text-rose-700 font-bold rounded-xl text-xs flex items-center gap-2">
+                    <i class="fas fa-triangle-exclamation"></i> Username atau password guru salah!
+                </div>
+
+                <form onsubmit="handleTeacherLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Username Guru</label>
+                        <input type="text" id="input-teacher-user" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Masukkan username..." />
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+                        <input type="password" id="input-teacher-pass" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Masukkan password..." />
+                    </div>
+
+                    <div class="space-y-2 pt-2">
+                        <button type="submit" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl text-base shadow-md transition">
+                            LOGIN
+                        </button>
+                        <button type="button" onclick="showPage('home')" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-sm transition">
+                            BATAL
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ================= 6. DASHBOARD GURU ================= -->
+        <div id="page-teacher-dashboard" class="hidden space-y-6">
+            <!-- Header Bar Dashboard -->
+            <div class="bg-white rounded-2xl p-4 shadow-md flex flex-wrap justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-100 text-indigo-700 rounded-xl">
+                        <i class="fas fa-user-shield text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="font-black text-slate-800 text-lg">Dashboard Guru & Pengelola</h2>
+                        <p class="text-xs text-slate-500">
+                            Kelola soal, pantau nilai siswa, dan sinkronkan data dengan Google Sheets.
+                            <span id="sync-status-text" class="text-emerald-600 font-bold ml-1"></span>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="fetchFromGoogleSheets()" class="px-3.5 py-2 bg-emerald-100 text-emerald-800 hover:bg-emerald-200 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">
+                        <i id="sync-spinner" class="fas fa-rotate"></i> Singkronkan Google Sheets 🔄
+                    </button>
+                    <button onclick="logoutTeacher()" class="px-3.5 py-2 bg-rose-100 text-rose-700 hover:bg-rose-200 rounded-xl font-bold text-xs flex items-center gap-1.5 transition">
+                        <i class="fas fa-right-from-bracket"></i> Keluar
+                    </button>
+                </div>
+            </div>
+
+            <!-- Tab Menu -->
+            <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-2">
+                <button onclick="switchTeacherTab('stats')" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition bg-indigo-600 text-white shadow-md" data-tab="stats">
+                    <i class="fas fa-chart-pie"></i> Ringkasan Statistik
+                </button>
+                <button onclick="switchTeacherTab('questions')" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition bg-white text-slate-600 hover:bg-slate-100" data-tab="questions">
+                    <i class="fas fa-book"></i> Bank Soal (40 Soal)
+                </button>
+                <button onclick="switchTeacherTab('scores')" class="tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition bg-white text-slate-600 hover:bg-slate-100" data-tab="scores">
+                    <i class="fas fa-trophy"></i> Peringkat & Skor Siswa
+                </button>
+            </div>
+
+            <!-- SUB-TAB 1: STATISTIK -->
+            <div id="tab-content-stats" class="space-y-6">
+                <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="p-3 bg-blue-100 text-blue-600 rounded-xl"><i class="fas fa-users text-xl"></i></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-400">Total Pengerjaan</div>
+                            <div id="stat-total-students" class="text-2xl font-black text-slate-800">0 Siswa</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><i class="fas fa-book text-xl"></i></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-400">Soal Aktif</div>
+                            <div id="stat-active-questions" class="text-2xl font-black text-slate-800">40 / 40</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="p-3 bg-amber-100 text-amber-600 rounded-xl"><i class="fas fa-star text-xl"></i></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-400">Rata-Rata Nilai</div>
+                            <div id="stat-avg-score" class="text-2xl font-black text-slate-800">0</div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                        <div class="p-3 bg-purple-100 text-purple-600 rounded-xl"><i class="fas fa-award text-xl"></i></div>
+                        <div>
+                            <div class="text-xs font-bold text-slate-400">Nilai Tertinggi</div>
+                            <div id="stat-max-score" class="text-2xl font-black text-slate-800">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUB-TAB 2: SOAL -->
+            <div id="tab-content-questions" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex justify-between items-center">
+                    <h3 class="font-black text-slate-800">Daftar Bank Soal Kuis</h3>
+                </div>
+                <div id="questions-list-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </div>
+
+            <!-- SUB-TAB 3: SKOR SISWA -->
+            <div id="tab-content-scores" class="hidden space-y-4">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-xs text-slate-500 uppercase font-bold">
+                                <th class="py-3 px-4">No</th>
+                                <th class="py-3 px-4">Nama Siswa</th>
+                                <th class="py-3 px-4">Kelas</th>
+                                <th class="py-3 px-4">Nilai</th>
+                                <th class="py-3 px-4">Benar</th>
+                                <th class="py-3 px-4">Waktu</th>
+                                <th class="py-3 px-4">Tanggal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scores-tbody" class="divide-y divide-slate-100 text-sm font-semibold text-slate-700">
+                            <!-- Injected via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        // 🌐 GOOGLE APPS SCRIPT URL
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwZTps_pnfPYHZ_g1gs96HrY4EZXtGAlPOam1DxMRQtIyEZrYP2MQS72LY6bQmtT0iC/exec";
+
+        // --- DATA SOAL INITIAL ---
+        const INITIAL_QUESTIONS = [
+            { id: 1, category: 'Hewan', question: 'Gambar hewan apakah ini?', answer: 'Kucing', options: ['Kucing', 'Kelinci', 'Ayam', 'Kambing'], icon: '🐱', active: true },
+            { id: 2, category: 'Hewan', question: 'Gambar hewan apakah ini?', answer: 'Anjing', options: ['Serigala', 'Anjing', 'Kucing', 'Harimau'], icon: '🐶', active: true },
+            { id: 3, category: 'Hewan', question: 'Gambar hewan apakah ini?', answer: 'Gajah', options: ['Jerapah', 'Kuda Nil', 'Gajah', 'Badak'], icon: '🐘', active: true },
+            { id: 4, category: 'Hewan', question: 'Gambar hewan apakah ini?', answer: 'Singa', options: ['Singa', 'Macan', 'Kucing', 'Serigala'], icon: '🦁', active: true },
+            { id: 5, category: 'Buah-buahan', question: 'Buah apakah ini?', answer: 'Apel', options: ['Jeruk', 'Apel', 'Mangga', 'Pisang'], icon: '🍎', active: true },
+            { id: 6, category: 'Buah-buahan', question: 'Buah apakah ini?', answer: 'Pisang', options: ['Pisang', 'Nanas', 'Lemon', 'Jagung'], icon: '🍌', active: true },
+            { id: 7, category: 'Sayuran', question: 'Sayur apakah ini?', answer: 'Wortel', options: ['Wortel', 'Lobak', 'Cabai', 'Kentang'], icon: '🥕', active: true },
+            { id: 8, category: 'Kendaraan', question: 'Kendaraan apakah ini?', answer: 'Mobil', options: ['Mobil', 'Truk', 'Bus', 'Motor'], icon: '🚗', active: true }
+        ];
+
+        // State Aplikasi
+        let soundEnabled = true;
+        let questions = JSON.parse(localStorage.getItem('anak_pintar_questions')) || INITIAL_QUESTIONS;
+        let leaderboard = JSON.parse(localStorage.getItem('anak_pintar_leaderboard')) || [];
+        
+        let studentName = '';
+        let studentClass = '1';
+        let currentQuestionIdx = 0;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let selectedAnswer = null;
+        let quizStartTime = 0;
+
+        // Sound Synthesizer
+        function playSound(type) {
+            if (!soundEnabled) return;
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (type === 'correct') {
+                    [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
+                        const osc = audioCtx.createOscillator();
+                        const gain = audioCtx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                        gain.gain.setValueAtTime(0.3, audioCtx.currentTime + idx * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.2);
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.start(audioCtx.currentTime + idx * 0.1);
+                        osc.stop(audioCtx.currentTime + idx * 0.1 + 0.25);
+                    });
+                } else if (type === 'wrong') {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.3);
+                    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 0.3);
+                }
+            } catch(e) {}
+        }
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('icon-sound');
+            const text = document.getElementById('text-sound');
+            const btn = document.getElementById('btn-toggle-sound');
+
+            if (soundEnabled) {
+                icon.className = 'fas fa-volume-high animate-bounce';
+                text.innerText = 'Suara Aktif';
+                btn.className = 'absolute top-4 left-6 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition transform hover:scale-105 border bg-emerald-500 hover:bg-emerald-600 text-white border-emerald-400';
+            } else {
+                icon.className = 'fas fa-volume-xmark';
+                text.innerText = 'Suara Muted';
+                btn.className = 'absolute top-4 left-6 px-4 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md flex items-center gap-1.5 transition transform hover:scale-105 border bg-slate-300 text-slate-700 border-slate-300';
+            }
+        }
+
+        // Navigation Page
+        function showPage(pageId) {
+            document.querySelectorAll('#app > div').forEach(el => el.classList.add('hidden'));
+            document.getElementById(`page-${pageId}`).classList.remove('hidden');
+
+            if (pageId === 'home') {
+                renderHomeLeaderboard();
+            }
+        }
+
+        function selectClass(cls) {
+            studentClass = cls;
+            document.querySelectorAll('.class-btn').forEach(btn => {
+                if (btn.dataset.class === cls) {
+                    btn.className = 'class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-sky-500 text-white border-sky-600 shadow-md';
+                } else {
+                    btn.className = 'class-btn py-2.5 rounded-xl font-black text-sm border-2 transition bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
+                }
+            });
+        }
+
+        // Kuis Logic
+        function startQuiz() {
+            const nameInput = document.getElementById('input-student-name').value.trim();
+            if (!nameInput) {
+                alert('Silakan masukkan nama adik terlebih dahulu ya!');
+                return;
+            }
+            studentName = nameInput;
+            currentQuestionIdx = 0;
+            scoreCorrect = 0;
+            scoreWrong = 0;
+            selectedAnswer = null;
+            quizStartTime = Date.now();
+            
+            showPage('quiz');
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            selectedAnswer = null;
+            const q = questions[currentQuestionIdx];
+            document.getElementById('quiz-icon').innerText = q.icon;
+            document.getElementById('quiz-question').innerText = q.question;
+            document.getElementById('quiz-score-correct').innerText = scoreCorrect;
+            document.getElementById('quiz-score-wrong').innerText = scoreWrong;
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-loading-next').classList.add('hidden');
+
+            const optionsContainer = document.getElementById('quiz-options');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'p-4 rounded-2xl font-bold text-lg sm:text-xl transition-all duration-200 flex items-center justify-between text-left shadow-sm bg-slate-50 border-2 border-slate-200 hover:border-sky-400 hover:bg-sky-50 text-slate-700';
+                btn.innerText = opt;
+                btn.onclick = () => handleAnswer(opt, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function handleAnswer(opt, btnElement) {
+            if (selectedAnswer !== null) return;
+            selectedAnswer = opt;
+
+            const q = questions[currentQuestionIdx];
+            const isCorrect = opt === q.answer;
+            const feedbackEl = document.getElementById('quiz-feedback');
+
+            if (isCorrect) {
+                scoreCorrect++;
+                playSound('correct');
+                btnElement.className = 'p-4 rounded-2xl font-bold text-lg sm:text-xl transition-all duration-200 flex items-center justify-between text-left shadow-sm bg-emerald-500 border-4 border-emerald-600 text-white font-black';
+                feedbackEl.className = 'p-4 rounded-2xl text-center mb-6 bg-emerald-100 text-emerald-800 border-2 border-emerald-300 block font-black text-lg';
+                feedbackEl.innerHTML = '✨ Hebat! Jawabanmu Benar! 🌟';
+            } else {
+                scoreWrong++;
+                playSound('wrong');
+                btnElement.className = 'p-4 rounded-2xl font-bold text-lg sm:text-xl transition-all duration-200 flex items-center justify-between text-left shadow-sm bg-rose-500 border-4 border-rose-600 text-white font-black animate-shake';
+                feedbackEl.className = 'p-4 rounded-2xl text-center mb-6 bg-rose-100 text-rose-800 border-2 border-rose-300 block font-bold text-base';
+                feedbackEl.innerHTML = 'Jawaban Kurang Tepat! 😅';
+            }
+
+            document.getElementById('quiz-score-correct').innerText = scoreCorrect;
+            document.getElementById('quiz-score-wrong').innerText = scoreWrong;
+            document.getElementById('quiz-loading-next').classList.remove('hidden');
+
+            setTimeout(() => {
+                if (currentQuestionIdx < questions.length - 1) {
+                    currentQuestionIdx++;
+                    loadQuestion();
+                } else {
+                    finishQuiz();
+                }
+            }, 1500);
+        }
+
+        function finishQuiz() {
+            const durationSec = Math.round((Date.now() - quizStartTime) / 1000);
+            const finalScore = Math.round((scoreCorrect / questions.length) * 100);
+
+            document.getElementById('result-student-name').innerText = studentName;
+            document.getElementById('result-final-score').innerText = finalScore;
+            document.getElementById('result-correct-count').innerText = `${scoreCorrect} / ${questions.length}`;
+            document.getElementById('result-duration').innerText = `${durationSec}s`;
+            document.getElementById('result-percentage').innerText = `${finalScore}%`;
+
+            // Kirim ke Google Sheets
+            if (GOOGLE_SCRIPT_URL && GOOGLE_SCRIPT_URL.startsWith('http')) {
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'saveResult',
+                        name: studentName,
+                        studentClass: studentClass,
+                        score: finalScore,
+                        correct: scoreCorrect,
+                        duration: durationSec
+                    })
+                }).catch(err => console.log('Google Sheets error:', err));
+            }
+
+            leaderboard.unshift({
+                id: Date.now(),
+                name: studentName,
+                studentClass: studentClass,
+                score: finalScore,
+                correct: scoreCorrect,
+                duration: durationSec,
+                date: new Date().toLocaleDateString('id-ID')
+            });
+
+            localStorage.setItem('anak_pintar_leaderboard', JSON.stringify(leaderboard));
+            showPage('result');
+        }
+
+        function renderHomeLeaderboard() {
+            const tbody = document.getElementById('home-leaderboard-tbody');
+            tbody.innerHTML = '';
+            
+            const top10 = leaderboard.slice(0, 10);
+            if (top10.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" class="py-4 text-center text-slate-400">Belum ada data nilai. Ayo jadi yang pertama bermain!</td></tr>';
+                return;
+            }
+
+            top10.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-amber-50/50 transition';
+                tr.innerHTML = `
+                    <td class="py-3 px-3 text-center">${idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `#${idx + 1}`}</td>
+                    <td class="py-3 px-3 font-extrabold text-slate-800">${row.name}</td>
+                    <td class="py-3 px-3 text-center text-slate-500">Kelas ${row.studentClass}</td>
+                    <td class="py-3 px-3 text-center">
+                        <span class="px-3 py-1 rounded-full text-xs font-black text-white shadow-sm bg-emerald-500">${row.score}</span>
+                    </td>
+                    <td class="py-3 px-3 text-center text-xs font-bold text-slate-400">${row.duration}s</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Halaman Guru
+        function goToTeacherPage() {
+            showPage('teacher-login');
+        }
+
+        function handleTeacherLogin(e) {
+            e.preventDefault();
+            const user = document.getElementById('input-teacher-user').value;
+            const pass = document.getElementById('input-teacher-pass').value;
+
+            if (user === 'guru' && pass === '123456') {
+                document.getElementById('login-error-msg').classList.add('hidden');
+                showPage('teacher-dashboard');
+                renderTeacherDashboard();
+            } else {
+                document.getElementById('login-error-msg').classList.remove('hidden');
+            }
+        }
+
+        function logoutTeacher() {
+            showPage('home');
+        }
+
+        function switchTeacherTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                if (btn.dataset.tab === tabName) {
+                    btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition bg-indigo-600 text-white shadow-md';
+                } else {
+                    btn.className = 'tab-btn px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm flex items-center gap-2 transition bg-white text-slate-600 hover:bg-slate-100';
+                }
+            });
+
+            ['stats', 'questions', 'scores'].forEach(t => {
+                document.getElementById(`tab-content-${t}`).classList.add('hidden');
+            });
+            document.getElementById(`tab-content-${tabName}`).classList.remove('hidden');
+        }
+
+        function renderTeacherDashboard() {
+            document.getElementById('stat-total-students').innerText = `${leaderboard.length} Siswa`;
+            document.getElementById('stat-active-questions').innerText = `${questions.length} Soal`;
+            const avg = leaderboard.length > 0 ? Math.round(leaderboard.reduce((a, b) => a + b.score, 0) / leaderboard.length) : 0;
+            document.getElementById('stat-avg-score').innerText = avg;
+
+            const scoresTbody = document.getElementById('scores-tbody');
+            scoresTbody.innerHTML = '';
+            leaderboard.forEach((row, idx) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="py-3 px-4 font-black">#${idx + 1}</td>
+                    <td class="py-3 px-4 font-bold text-slate-900">${row.name}</td>
+                    <td class="py-3 px-4">Kelas ${row.studentClass}</td>
+                    <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-xs font-black text-white bg-emerald-500">${row.score}</span></td>
+                    <td class="py-3 px-4">${row.correct} / 40</td>
+                    <td class="py-3 px-4">${row.duration}s</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${row.date}</td>
+                `;
+                scoresTbody.appendChild(tr);
+            });
+        }
+
+        async function fetchFromGoogleSheets() {
+            if (!GOOGLE_SCRIPT_URL) return;
+            const spinner = document.getElementById('sync-spinner');
+            spinner.classList.add('animate-spin');
+
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await res.json();
+                if (data && data.leaderboard) {
+                    leaderboard = data.leaderboard;
+                    localStorage.setItem('anak_pintar_leaderboard', JSON.stringify(leaderboard));
+                    renderTeacherDashboard();
+                    renderHomeLeaderboard();
+                    alert('✅ Data dari Google Sheets berhasil disinkronkan!');
+                }
+            } catch (err) {
+                console.log('Sinkronkan error:', err);
+            } finally {
+                spinner.classList.remove('animate-spin');
+            }
+        }
+
+        // Inisialisasi saat pertama dibuka
+        renderHomeLeaderboard();
+    </script>
+</body>
+</html>
