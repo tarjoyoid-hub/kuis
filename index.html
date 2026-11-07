@@ -381,6 +381,16 @@
 
             <!-- SUB-TAB 3: SKOR SISWA -->
             <div id="tab-content-scores" class="hidden space-y-4">
+                <div class="bg-white p-4 rounded-2xl shadow-sm flex flex-wrap justify-between items-center gap-3">
+                    <div>
+                        <h3 class="font-black text-slate-800 text-lg">Daftar Peringkat & Skor Siswa</h3>
+                        <p class="text-xs text-slate-500">Data hasil pengerjaan kuis siswa yang tersimpan di Google Sheets.</p>
+                    </div>
+                    <button onclick="fetchStudentScoresOnly()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-2 shadow-md transition transform hover:scale-105">
+                        <i id="btn-fetch-icon" class="fas fa-cloud-arrow-down text-sm"></i> Ambil Data Siswa 📥
+                    </button>
+                </div>
+
                 <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
                     <table class="w-full text-left border-collapse">
                         <thead>
@@ -690,24 +700,119 @@
         function renderTeacherDashboard() {
             document.getElementById('stat-total-students').innerText = `${leaderboard.length} Siswa`;
             document.getElementById('stat-active-questions').innerText = `${questions.length} Soal`;
-            const avg = leaderboard.length > 0 ? Math.round(leaderboard.reduce((a, b) => a + b.score, 0) / leaderboard.length) : 0;
+            const avg = leaderboard.length > 0 ? Math.round(leaderboard.reduce((a, b) => a + Number(b.score || 0), 0) / leaderboard.length) : 0;
             document.getElementById('stat-avg-score').innerText = avg;
 
             const scoresTbody = document.getElementById('scores-tbody');
             scoresTbody.innerHTML = '';
+
+            if (leaderboard.length === 0) {
+                scoresTbody.innerHTML = '<tr><td colspan="7" class="py-6 text-center text-slate-400 font-medium">Belum ada data skor siswa. Klik tombol "Ambil Data Siswa 📥" untuk memuat data dari Google Sheets.</td></tr>';
+                return;
+            }
+
             leaderboard.forEach((row, idx) => {
                 const tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
                 tr.innerHTML = `
                     <td class="py-3 px-4 font-black">#${idx + 1}</td>
-                    <td class="py-3 px-4 font-bold text-slate-900">${row.name}</td>
-                    <td class="py-3 px-4">Kelas ${row.studentClass}</td>
+                    <td class="py-3 px-4 font-bold text-slate-900">${row.name || 'Siswa'}</td>
+                    <td class="py-3 px-4">Kelas ${row.studentClass || '1'}</td>
                     <td class="py-3 px-4"><span class="px-2.5 py-1 rounded-full text-xs font-black text-white bg-emerald-500">${row.score}</span></td>
-                    <td class="py-3 px-4">${row.correct} / 40</td>
-                    <td class="py-3 px-4">${row.duration}s</td>
-                    <td class="py-3 px-4 text-xs text-slate-400">${row.date}</td>
+                    <td class="py-3 px-4">${row.correct !== undefined ? row.correct : '-'} / ${questions.length || 40}</td>
+                    <td class="py-3 px-4">${row.duration || 0}s</td>
+                    <td class="py-3 px-4 text-xs text-slate-400">${row.date || '-'}</td>
                 `;
                 scoresTbody.appendChild(tr);
             });
+        }
+
+        async function fetchStudentScoresOnly() {
+            if (!GOOGLE_SCRIPT_URL || !GOOGLE_SCRIPT_URL.startsWith('http')) {
+                alert('⚠️ URL Google Apps Script belum diatur atau tidak valid!\n\nPastikan Anda telah mengisi variabel GOOGLE_SCRIPT_URL dengan Web App URL dari Google Apps Script Anda.');
+                return;
+            }
+
+            const btnIcon = document.getElementById('btn-fetch-icon');
+            if (btnIcon) btnIcon.className = 'fas fa-spinner fa-spin text-sm';
+
+            try {
+                // Tambahkan timestamp untuk menghindari cache browser
+                const fetchUrl = GOOGLE_SCRIPT_URL + (GOOGLE_SCRIPT_URL.includes('?') ? '&' : '?') + 't=' + Date.now();
+                const res = await fetch(fetchUrl, { method: 'GET', redirect: 'follow' });
+                const text = await res.text();
+                
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error("Gagal parse JSON dari Google Script:", text);
+                    throw new Error("Respons dari Google Script bukan format JSON valid.");
+                }
+
+                let rawList = [];
+
+                // Cek seluruh skema properti JSON yang mungkin dikembalikan Apps Script
+                if (data && Array.isArray(data.leaderboard)) {
+                    rawList = data.leaderboard;
+                } else if (data && Array.isArray(data.HasilSiswa)) {
+                    rawList = data.HasilSiswa;
+                } else if (data && Array.isArray(data.hasil)) {
+                    rawList = data.hasil;
+                } else if (data && Array.isArray(data.data)) {
+                    rawList = data.data;
+                } else if (Array.isArray(data)) {
+                    rawList = data;
+                }
+
+                if (rawList.length > 0) {
+                    // Abaikan baris pertama jika itu adalah header kolom ("Nama", "Kelas", dst)
+                    const filteredList = rawList.filter(item => {
+                        if (Array.isArray(item)) {
+                            return item[0] && String(item[0]).toLowerCase() !== 'nama' && String(item[0]).toLowerCase() !== 'name';
+                        }
+                        return item && item.name !== 'Nama' && item.Nama !== 'Nama';
+                    });
+
+                    leaderboard = filteredList.map((item, idx) => {
+                        if (Array.isArray(item)) {
+                            return {
+                                id: Date.now() + idx,
+                                name: item[0] || 'Siswa',
+                                studentClass: String(item[1] || '1'),
+                                score: Number(item[2] || 0),
+                                correct: Number(item[3] || 0),
+                                duration: Number(item.length > 4 ? item[4] : 0),
+                                date: item.length > 5 ? String(item[5]) : new Date().toLocaleDateString('id-ID')
+                            };
+                        }
+                        return {
+                            id: item.id || Date.now() + idx,
+                            name: item.name || item.Nama || item.nama || 'Siswa',
+                            studentClass: String(item.studentClass || item.Kelas || item.kelas || '1'),
+                            score: Number(item.score || item.Nilai || item.nilai || 0),
+                            correct: Number(item.correct || item.JawabanBenar || item.benar || 0),
+                            duration: Number(item.duration || item.Durasi || item.waktu || 0),
+                            date: item.date || item.Tanggal || item.tanggal || new Date().toLocaleDateString('id-ID')
+                        };
+                    });
+
+                    // Urutkan nilai tertinggi lalu durasi tercepat
+                    leaderboard.sort((a, b) => b.score - a.score || a.duration - b.duration);
+
+                    localStorage.setItem('anak_pintar_leaderboard', JSON.stringify(leaderboard));
+                    renderTeacherDashboard();
+                    renderHomeLeaderboard();
+                    alert(`✅ Berhasil mengambil ${leaderboard.length} data siswa dari Google Sheets!`);
+                } else {
+                    alert('ℹ️ Tidak ditemukan data nilai siswa di Google Sheets.\n\nPastikan tab "HasilSiswa" pada Google Sheet Anda sudah berisi baris data pengerjaan siswa.');
+                }
+            } catch (err) {
+                console.error('Error fetching student scores:', err);
+                alert('⚠️ Gagal mengambil data siswa.\n\nLangkah Penanganan:\n1. Pastikan Google Script dipublikasikan dengan akses "Anyone" (Siapa saja).\n2. Cek koneksi internet Anda.\n3. Lakukan percobaan pengerjaan kuis 1x terlebih dahulu agar data masuk ke Google Sheets.');
+            } finally {
+                if (btnIcon) btnIcon.className = 'fas fa-cloud-arrow-down text-sm';
+            }
         }
 
         async function fetchFromGoogleSheets() {
