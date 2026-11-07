@@ -333,7 +333,7 @@
                     <div>
                         <h2 class="font-black text-slate-800 text-lg">Dashboard Guru & Pengelola</h2>
                         <p class="text-xs text-slate-500">
-                            Kelola soal, pantau nilai siswa, dan unduh laporan kuis.
+                            Kelola soal, pantau nilai siswa, dan sinkronkan data dengan Google Sheets.
                             <span id="sync-time-indicator" class="text-emerald-600 font-bold ml-1"></span>
                         </p>
                     </div>
@@ -1254,7 +1254,7 @@
             fetchGoogleSheetScores();
             setInterval(() => {
                 fetchGoogleSheetScores();
-            }, 15000);
+            }, 3000);
         };
     </script>
 </body>
